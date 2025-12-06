@@ -1,0 +1,25 @@
+{
+  "name": "বিনিময়",
+  "short_name": "বিনিময়",
+  "description": "১০০% অর্গানিক ও প্রাকৃতিক পণ্য",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2d7a4e",
+  "orientation": "portrait",
+  "lang": "bn",
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
