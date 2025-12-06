@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import BannerSkeleton from './BannerSkeleton';
 
 const banners = [
   {
@@ -17,11 +18,12 @@ const banners = [
     image: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&q=80&w=1200",
     alt: "দেশি পণ্য"
   },
-
 ];
 
 const Banner: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [imagesLoaded, setImagesLoaded] = useState<boolean[]>(new Array(banners.length).fill(false));
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -30,7 +32,32 @@ const Banner: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    // Preload all banner images
+    banners.forEach((banner, index) => {
+      const img = new Image();
+      img.src = banner.image;
+      img.onload = () => {
+        setImagesLoaded(prev => {
+          const updated = [...prev];
+          updated[index] = true;
+          return updated;
+        });
+      };
+    });
+  }, []);
+
+  useEffect(() => {
+    if (imagesLoaded[0]) {
+      setIsLoading(false);
+    }
+  }, [imagesLoaded]);
+
   const currentBanner = banners[currentIndex];
+
+  if (isLoading) {
+    return <BannerSkeleton />;
+  }
 
   return (
     <div className="relative overflow-hidden rounded-2xl">

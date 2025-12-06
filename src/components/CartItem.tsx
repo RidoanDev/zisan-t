@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { Product } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface CartItemProps {
   product: Product & { quantity: number };
@@ -10,14 +11,22 @@ interface CartItemProps {
 
 const CartItem: React.FC<CartItemProps> = ({ product }) => {
   const { updateQuantity, removeFromCart } = useCart();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
     <div className="flex gap-3 bg-card rounded-xl p-3 shadow-soft animate-fade-in">
-      <img
-        src={product.image}
-        alt={product.name}
-        className="w-20 h-20 object-cover rounded-lg"
-      />
+      <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+        {!imageLoaded && (
+          <Skeleton className="absolute inset-0 w-full h-full" />
+        )}
+        <img
+          src={product.image}
+          alt={product.name}
+          loading="lazy"
+          onLoad={() => setImageLoaded(true)}
+          className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+        />
+      </div>
       
       <div className="flex-1 min-w-0">
         <h3 className="font-medium text-foreground text-sm line-clamp-2">{product.name}</h3>
