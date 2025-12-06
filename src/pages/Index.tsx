@@ -10,6 +10,7 @@ import Banner from '@/components/Banner';
 import CategoryCard from '@/components/CategoryCard';
 import ProductCard from '@/components/ProductCard';
 import ProductSkeleton from '@/components/ProductSkeleton';
+import CategorySkeleton from '@/components/CategorySkeleton';
 import {
   Select,
   SelectContent,
@@ -25,13 +26,20 @@ const Index: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState('default');
   const [isLoading, setIsLoading] = useState(true);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   // Simulate backend loading
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const categoryTimer = setTimeout(() => {
+      setCategoriesLoading(false);
+    }, 400);
+    const productTimer = setTimeout(() => {
       setIsLoading(false);
     }, 800);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(categoryTimer);
+      clearTimeout(productTimer);
+    };
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -111,22 +119,31 @@ const Index: React.FC = () => {
           {/* Categories */}
           <section>
             <div className="overflow-x-auto lg:overflow-x-visible hide-scrollbar">
-              <div className="flex gap-2 lg:grid lg:grid-cols-3 lg:gap-2 lg:grid-rows-2 lg:max-h-[280px] lg:overflow-y-auto lg:pr-2">
-                <button
-                  onClick={() => setSelectedCategory(null)}
-                  className="flex-shrink-0 flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-300 hover:scale-105"
-                >
-                  <ShoppingBag className="w-6 h-6 mb-1 text-muted-foreground" />
-                  <span className="text-xs font-medium whitespace-nowrap text-foreground">সব</span>
-                </button>
-                {categories.map((category) => (
-                  <CategoryCard
-                    key={category.id}
-                    category={category}
-                    isSelected={selectedCategory === category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                  />
-                ))}
+              <div className="flex gap-2 lg:grid lg:grid-cols-4 xl:grid-cols-5 lg:gap-3">
+                {categoriesLoading ? (
+                  // Category Skeleton loading
+                  Array.from({ length: 8 }).map((_, index) => (
+                    <CategorySkeleton key={index} />
+                  ))
+                ) : (
+                  <>
+                    <button
+                      onClick={() => setSelectedCategory(null)}
+                      className="flex-shrink-0 flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-300 hover:scale-105"
+                    >
+                      <ShoppingBag className="w-6 h-6 mb-1 text-muted-foreground" />
+                      <span className="text-xs font-medium whitespace-nowrap text-foreground">সব</span>
+                    </button>
+                    {categories.map((category) => (
+                      <CategoryCard
+                        key={category.id}
+                        category={category}
+                        isSelected={selectedCategory === category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                      />
+                    ))}
+                  </>
+                )}
               </div>
             </div>
           </section>

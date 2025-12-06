@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
@@ -6,6 +6,7 @@ import { locations } from '@/data/products';
 import TopNav from '@/components/TopNav';
 import BottomNav from '@/components/BottomNav';
 import CartItem from '@/components/CartItem';
+import CartItemSkeleton from '@/components/CartItemSkeleton';
 import Benefits from '@/components/Benefits';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,6 +21,14 @@ const Cart: React.FC = () => {
   const navigate = useNavigate();
   const { items, getTotalPrice } = useCart();
   const [selectedLocation, setSelectedLocation] = useState<string>('mirpur');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, []);
 
   const location = locations.find(l => l.id === selectedLocation);
   const deliveryCharge = location?.deliveryCharge || 0;
@@ -30,7 +39,7 @@ const Cart: React.FC = () => {
     navigate('/order');
   };
 
-  if (items.length === 0) {
+  if (items.length === 0 && !isLoading) {
     return (
       <div className="min-h-screen bg-background pb-20">
         <TopNav title="কার্ট" showBack={true} icon={ShoppingCart} />
@@ -63,9 +72,15 @@ const Cart: React.FC = () => {
           <div className="lg:col-span-2 space-y-4">
             {/* Cart Items */}
             <div className="space-y-3">
-              {items.map(item => (
-                <CartItem key={item.id} product={item} />
-              ))}
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, index) => (
+                  <CartItemSkeleton key={index} />
+                ))
+              ) : (
+                items.map(item => (
+                  <CartItem key={item.id} product={item} />
+                ))
+              )}
             </div>
 
             {/* Benefits */}
@@ -94,9 +109,9 @@ const Cart: React.FC = () => {
             </div>
           </div>
 
-          {/* Order Summary - Scrollable */}
+          {/* Order Summary - Scrollable (not sticky) */}
           <div className="lg:col-span-1">
-            <div className="bg-card rounded-2xl p-5 shadow-soft sticky top-20">
+            <div className="bg-card rounded-2xl p-5 shadow-soft">
               <h3 className="font-semibold text-foreground mb-4">অর্ডার সামারি</h3>
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between text-sm">
