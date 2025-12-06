@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Phone, MessageCircle, Facebook, Mail, Info, Download } from 'lucide-react';
 import TopNav from '@/components/TopNav';
 import BottomNav from '@/components/BottomNav';
 import ShareButton from '@/components/ShareButton';
 import { Button } from '@/components/ui/button';
 import { usePWAInstall } from '@/context/PWAInstallContext';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const contactMethods = [
   {
@@ -39,6 +40,7 @@ const contactMethods = [
 
 const Contact: React.FC = () => {
   const { isInstalled, triggerInstall } = usePWAInstall();
+  const [logoLoaded, setLogoLoaded] = useState(false);
 
   const handleInstall = async () => {
     await triggerInstall();
@@ -52,11 +54,17 @@ const Contact: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* App Info */}
           <div className="bg-card rounded-2xl p-5 text-center shadow-soft">
-            <img 
-              src="/logo.png" 
-              alt="বিনিময়" 
-              className="w-20 h-20 mx-auto object-contain"
-            />
+            <div className="relative w-20 h-20 mx-auto mb-2">
+              {!logoLoaded && (
+                <Skeleton className="absolute inset-0 rounded-full" />
+              )}
+              <img 
+                src="/logo.png" 
+                alt="বিনিময়" 
+                className={`w-20 h-20 object-contain transition-opacity duration-300 ${logoLoaded ? 'opacity-100' : 'opacity-0'}`}
+                onLoad={() => setLogoLoaded(true)}
+              />
+            </div>
             <h2 className="text-xl font-bold text-foreground mb-2">বিনিময়</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               আমরা সরাসরি কৃষকদের কাছ থেকে ১০০% অর্গানিক ও প্রাকৃতিক পণ্য সংগ্রহ করে 

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { LucideIcon } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface TopNavProps {
   title: string;
@@ -15,6 +16,7 @@ const TopNav: React.FC<TopNavProps> = ({ title, showBack = true, showCart = fals
   const navigate = useNavigate();
   const { getTotalItems } = useCart();
   const totalItems = getTotalItems();
+  const [logoLoaded, setLogoLoaded] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg border-b border-border">
@@ -43,11 +45,17 @@ const TopNav: React.FC<TopNavProps> = ({ title, showBack = true, showCart = fals
           <>
             {/* Shop page layout */}
             <div className="flex items-center gap-3">
-              <img 
-                src="/logo.jpg" 
-                alt="বিনিময়" 
-                className="w-9 h-9 rounded-full object-cover"
-              />
+              <div className="relative w-9 h-9">
+                {!logoLoaded && (
+                  <Skeleton className="absolute inset-0 rounded-full" />
+                )}
+                <img 
+                  src="/logo.jpg" 
+                  alt="বিনিময়" 
+                  className={`w-9 h-9 rounded-full object-cover transition-opacity duration-300 ${logoLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  onLoad={() => setLogoLoaded(true)}
+                />
+              </div>
               <h1 className="text-xl font-bold text-foreground">{title}</h1>
             </div>
             
