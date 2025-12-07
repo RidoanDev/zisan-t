@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Star, ShoppingCart, Package, Store, Box, ShoppingBag } from 'lucide-react';
 import { products } from '@/data/products';
 import { useCart } from '@/context/CartContext';
+import { useCelebration } from '@/hooks/useCelebration';
 import TopNav from '@/components/TopNav';
 import BottomNav from '@/components/BottomNav';
 import Benefits from '@/components/Benefits';
@@ -17,17 +18,19 @@ const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart, getCartSummary } = useCart();
+  const { triggerConfetti, triggerCelebration } = useCelebration();
   const [isLoading, setIsLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const product = products.find(p => p.id === id);
 
+  // Extended loading for better image preloading
   useEffect(() => {
     setIsLoading(true);
     setImageLoaded(false);
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 500);
+    }, 1000);
     return () => clearTimeout(timer);
   }, [id]);
 
@@ -41,6 +44,7 @@ const ProductDetails: React.FC = () => {
 
   const handleAddToCart = () => {
     addToCart(product);
+    triggerConfetti();
     toast.success(`${product.name} কার্টে যুক্ত হয়েছে!`, {
       description: 'কার্ট দেখতে নিচের কার্ট আইকনে ক্লিক করুন'
     });
@@ -48,6 +52,7 @@ const ProductDetails: React.FC = () => {
 
   const handleOrder = () => {
     addToCart(product);
+    triggerCelebration();
     const orderText = `অর্ডার তথ্য:\n${product.name} (ID: ${product.id}) - 1 পিস`;
     navigator.clipboard.writeText(orderText);
     toast.success('অর্ডার তথ্য কপি হয়েছে!', {

@@ -23,10 +23,11 @@ const Cart: React.FC = () => {
   const [selectedLocation, setSelectedLocation] = useState<string>('mirpur');
   const [isLoading, setIsLoading] = useState(true);
 
+  // Extended loading for better image preloading
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 400);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
