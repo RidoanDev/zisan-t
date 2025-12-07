@@ -1,24 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import BannerSkeleton from './BannerSkeleton';
+import { bannerImages } from '@/data/products';
 
-const banners = [
-  {
-    id: 1,
-    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1200",
-    alt: "জৈব সবজি"
-  },
-  {
-    id: 2,
-    image: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&q=80&w=1200",
-    alt: "তাজা ফল"
-  },
-  {
-    id: 3,
-    image: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&q=80&w=1200",
-    alt: "দেশি পণ্য"
-  },
-];
+const banners = bannerImages.map((image, index) => ({
+  id: index + 1,
+  image: image,
+  alt: `বিনিময় ব্যানার ${index + 1}`
+}));
 
 const Banner: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
