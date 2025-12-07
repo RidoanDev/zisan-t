@@ -4,6 +4,8 @@ import { TrendingUp, Users, Shield, Truck, Award, Headphones, Plus, Handshake, P
 import TopNav from '@/components/TopNav';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
+import { useCelebration } from '@/hooks/useCelebration';
+import { toast } from 'sonner';
 
 const benefits = [
   {
@@ -40,8 +42,13 @@ const benefits = [
 
 const Seller: React.FC = () => {
   const navigate = useNavigate();
+  const { triggerCelebration } = useCelebration();
 
   const handleFloatingButtonClick = () => {
+    triggerCelebration();
+    toast.success('নতুন পণ্য যুক্ত করুন!', {
+      description: 'আপনার পণ্য আমাদের প্ল্যাটফর্মে যুক্ত করুন'
+    });
     navigate('/add-product');
   };
 

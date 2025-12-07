@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Phone, MessageCircle, Facebook, FileText, Copy, Check, ClipboardList } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { locations, Product } from '@/data/products';
+import { useCelebration } from '@/hooks/useCelebration';
 import TopNav from '@/components/TopNav';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { toast } from 'sonner';
 const Order: React.FC = () => {
   const location = useLocation();
   const singleProduct = location.state?.singleProduct as Product | undefined;
+  const { triggerFireworks, triggerCoinRain } = useCelebration();
   
   const { items, getTotalPrice, getCartSummary } = useCart();
   
@@ -20,6 +22,16 @@ const Order: React.FC = () => {
     : items;
   const [copied, setCopied] = React.useState(false);
   const [selectedLocation] = React.useState<string>('mirpur');
+
+  // Celebration on order page mount
+  useEffect(() => {
+    if (orderItems.length > 0) {
+      const timer = setTimeout(() => {
+        triggerCoinRain();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const deliveryLocation = locations.find(l => l.id === selectedLocation);
   const deliveryCharge = deliveryLocation?.deliveryCharge || 0;
@@ -40,6 +52,7 @@ const Order: React.FC = () => {
     const orderText = `অর্ডার তথ্য:\n${orderSummary}`;
     navigator.clipboard.writeText(orderText);
     setCopied(true);
+    triggerFireworks();
     toast.success('অর্ডার তথ্য কপি হয়েছে!', {
       description: 'এখন যেকোনো মাধ্যমে পেস্ট করুন'
     });

@@ -28,14 +28,14 @@ const Index: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
-  // Simulate backend loading
+  // Extended loading time for better image preloading
   useEffect(() => {
     const categoryTimer = setTimeout(() => {
       setCategoriesLoading(false);
-    }, 400);
+    }, 1200);
     const productTimer = setTimeout(() => {
       setIsLoading(false);
-    }, 800);
+    }, 1800);
     return () => {
       clearTimeout(categoryTimer);
       clearTimeout(productTimer);

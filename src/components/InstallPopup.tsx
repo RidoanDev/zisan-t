@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { Download, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePWAInstall } from '@/context/PWAInstallContext';
+import { useCelebration } from '@/hooks/useCelebration';
 
 const InstallPopup = () => {
   const { deferredPrompt, isInstalled, triggerInstall } = usePWAInstall();
+  const { triggerFireworks } = useCelebration();
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
@@ -22,6 +24,7 @@ const InstallPopup = () => {
   const handleInstall = async () => {
     const success = await triggerInstall();
     if (success) {
+      triggerFireworks();
       setShowPopup(false);
       localStorage.setItem('installPopupShown', 'true');
     }

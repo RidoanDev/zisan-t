@@ -1,6 +1,7 @@
 import { Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useCelebration } from '@/hooks/useCelebration';
 
 interface ShareButtonProps {
   variant?: 'default' | 'ghost' | 'secondary';
@@ -13,6 +14,8 @@ const ShareButton: React.FC<ShareButtonProps> = ({
   size = 'default',
   showText = true 
 }) => {
+  const { triggerCoinRain } = useCelebration();
+  
   const handleShare = async () => {
     try {
       // Try to share with image
@@ -29,6 +32,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({
 
       if (navigator.canShare && navigator.canShare(shareData)) {
         await navigator.share(shareData);
+        triggerCoinRain();
         toast.success('শেয়ার করা হয়েছে!');
       } else if (navigator.share) {
         // Fallback without image
@@ -37,6 +41,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({
           text: '১০০% অর্গানিক ও প্রাকৃতিক পণ্য কিনুন বিনিময় থেকে',
           url: window.location.origin
         });
+        triggerCoinRain();
         toast.success('শেয়ার করা হয়েছে!');
       } else {
         // Fallback: copy link to clipboard

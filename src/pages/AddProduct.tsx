@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { PackagePlus } from 'lucide-react';
 import TopNav from '@/components/TopNav';
 import BottomNav from '@/components/BottomNav';
+import { useCelebration } from '@/hooks/useCelebration';
 
 const AddProduct: React.FC = () => {
+  const { triggerCelebration } = useCelebration();
+
+  // Celebration on page mount for new sellers
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      triggerCelebration();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <TopNav title="পণ্য যুক্ত করুন" showBack={true} icon={PackagePlus} />
