@@ -1,34 +1,25 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { FileText, Copy, Check, ClipboardList } from 'lucide-react';
+import { Phone, MessageCircle, Facebook, FileText, Copy, Check, ClipboardList } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { locations, Product } from '@/data/products';
 import { useCelebration } from '@/hooks/useCelebration';
 import TopNav from '@/components/TopNav';
 import BottomNav from '@/components/BottomNav';
-import ContactMethods from '@/components/ContactMethods';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 const Order: React.FC = () => {
   const location = useLocation();
   const singleProduct = location.state?.singleProduct as Product | undefined;
-  const selectedItems = location.state?.selectedItems as (Product & { quantity: number })[] | undefined;
   const { triggerFireworks, triggerCoinRain } = useCelebration();
   
   const { items, getTotalPrice, getCartSummary } = useCart();
   
-  // Use single product, selected items, or all cart items
-  const orderItems = useMemo(() => {
-    if (singleProduct) {
-      return [{ ...singleProduct, quantity: 1 }];
-    }
-    if (selectedItems && selectedItems.length > 0) {
-      return selectedItems;
-    }
-    return items;
-  }, [singleProduct, selectedItems, items]);
-
+  // Use single product or cart items
+  const orderItems = singleProduct 
+    ? [{ ...singleProduct, quantity: 1 }] 
+    : items;
   const [copied, setCopied] = React.useState(false);
   const [selectedLocation] = React.useState<string>('mirpur');
 
@@ -46,24 +37,18 @@ const Order: React.FC = () => {
   const deliveryCharge = deliveryLocation?.deliveryCharge || 0;
   
   // Calculate subtotal based on order items
-  const subtotal = useMemo(() => {
-    if (singleProduct) return singleProduct.price;
-    return orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  }, [singleProduct, orderItems]);
-  
+  const subtotal = singleProduct 
+    ? singleProduct.price 
+    : getTotalPrice();
   const total = subtotal + deliveryCharge;
 
   // Generate order summary
-  const orderSummary = useMemo(() => {
-    if (singleProduct) {
-      return `${singleProduct.name} (ID: ${singleProduct.id})\nপরিমাণ: × 1`;
-    }
-    return orderItems.map(item => 
-      `${item.name} (ID: ${item.id}) × ${item.quantity}`
-    ).join('\n');
-  }, [singleProduct, orderItems]);
+  const orderSummary = singleProduct
+    ? `${singleProduct.name} (ID: ${singleProduct.id})\nপরিমাণ: × 1`
+    : getCartSummary();
 
   const copyOrderInfo = () => {
+    // Copy without price
     const orderText = `অর্ডার তথ্য:\n${orderSummary}`;
     navigator.clipboard.writeText(orderText);
     setCopied(true);
@@ -73,6 +58,30 @@ const Order: React.FC = () => {
     });
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const contactMethods = [
+    {
+      icon: Phone,
+      label: "সরাসরি কল করুন",
+      description: "আমাদের কল করে অর্ডার করুন",
+      href: "tel:+8809638845910",
+      color: "bg-success/10 text-success border-success/20"
+    },
+    {
+      icon: MessageCircle,
+      label: "হোয়াটসঅ্যাপে মেসেজ",
+      description: "হোয়াটসঅ্যাপে অর্ডার করুন",
+      href: `https://wa.me/88011712525910?text=${encodeURIComponent(`অর্ডার তথ্য:\n${orderSummary}`)}`,
+      color: "bg-success/10 text-success border-success/20"
+    },
+    {
+      icon: Facebook,
+      label: "ফেইসবুকে মেসেজ",
+      description: "ফেইসবুক পেজে অর্ডার করুন",
+      href: "https://m.me/binimoy.organic",
+      color: "bg-info/10 text-info border-info/20"
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -129,12 +138,32 @@ const Order: React.FC = () => {
               </div>
             )}
 
-            {/* Contact Methods */}
+            {/* Order Methods */}
             <section>
               <h3 className="text-base font-semibold text-foreground mb-3">
                 অর্ডার করতে যোগাযোগ করুন
               </h3>
-              <ContactMethods orderSummary={orderSummary} showEmail={false} />
+              <div className="space-y-3">
+                {contactMethods.map((method, index) => (
+                  <a
+                    key={index}
+                    href={method.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => copyOrderInfo()}
+                    className={`flex items-center gap-4 bg-card rounded-2xl p-4 shadow-soft border-2 ${method.color} hover:shadow-lg transition-all animate-fade-in`}
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <div className={`w-12 h-12 rounded-full ${method.color.split(' ')[0]} flex items-center justify-center`}>
+                      <method.icon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">{method.label}</p>
+                      <p className="text-sm text-muted-foreground">{method.description}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
             </section>
           </div>
 
