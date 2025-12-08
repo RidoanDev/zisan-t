@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Star, ShoppingCart, ShoppingBag } from 'lucide-react';
 import { Product } from '@/data/products';
 import { useCart } from '@/context/CartContext';
+import { useCelebration } from '@/hooks/useCelebration';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,16 +15,19 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { triggerConfetti, triggerCelebration } = useCelebration();
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     addToCart(product);
+    triggerConfetti();
     toast.success(`${product.name} কার্টে যুক্ত হয়েছে!`);
   };
 
   const handleOrder = (e: React.MouseEvent) => {
     e.stopPropagation();
+    triggerCelebration();
     navigate('/order', { state: { singleProduct: product } });
   };
 
@@ -46,7 +50,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <img
           src={product.image}
           alt={product.name}
-          loading="lazy"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
           onLoad={() => setImageLoaded(true)}
           className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
         />
