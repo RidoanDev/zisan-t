@@ -14,6 +14,15 @@ const Banner: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState<boolean[]>(new Array(banners.length).fill(false));
   const [currentImageLoaded, setCurrentImageLoaded] = useState(false);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
+  // 1.6s initial skeleton loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setInitialLoadComplete(true);
+    }, 1600);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,10 +48,10 @@ const Banner: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (imagesLoaded[0]) {
+    if (imagesLoaded[0] && initialLoadComplete) {
       setIsLoading(false);
     }
-  }, [imagesLoaded]);
+  }, [imagesLoaded, initialLoadComplete]);
 
   useEffect(() => {
     if (imagesLoaded[currentIndex]) {

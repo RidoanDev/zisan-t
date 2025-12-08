@@ -24,13 +24,13 @@ const ProductDetails: React.FC = () => {
 
   const product = products.find(p => p.id === id);
 
-  // Extended loading for better image preloading
+  // 1.6s loading for better image preloading
   useEffect(() => {
     setIsLoading(true);
     setImageLoaded(false);
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
+    }, 1600);
     return () => clearTimeout(timer);
   }, [id]);
 

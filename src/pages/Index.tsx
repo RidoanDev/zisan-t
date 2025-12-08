@@ -28,18 +28,13 @@ const Index: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
-  // Extended loading time for better image preloading
+  // Unified 1.6s loading time for better UX
   useEffect(() => {
-    const categoryTimer = setTimeout(() => {
+    const timer = setTimeout(() => {
       setCategoriesLoading(false);
-    }, 1200);
-    const productTimer = setTimeout(() => {
       setIsLoading(false);
-    }, 1800);
-    return () => {
-      clearTimeout(categoryTimer);
-      clearTimeout(productTimer);
-    };
+    }, 1600);
+    return () => clearTimeout(timer);
   }, []);
 
   const filteredProducts = useMemo(() => {
