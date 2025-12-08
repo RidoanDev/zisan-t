@@ -28,12 +28,12 @@ const Index: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
-  // Unified 1.6s loading time for better UX
+  // 1.2s loading time for better UX
   useEffect(() => {
     const timer = setTimeout(() => {
       setCategoriesLoading(false);
       setIsLoading(false);
-    }, 1600);
+    }, 1200);
     return () => clearTimeout(timer);
   }, []);
 

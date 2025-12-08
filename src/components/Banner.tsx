@@ -16,11 +16,11 @@ const Banner: React.FC = () => {
   const [currentImageLoaded, setCurrentImageLoaded] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
-  // 1.6s initial skeleton loading
+  // 1.2s initial skeleton loading
   useEffect(() => {
     const timer = setTimeout(() => {
       setInitialLoadComplete(true);
-    }, 1600);
+    }, 1200);
     return () => clearTimeout(timer);
   }, []);
 

@@ -1,20 +1,35 @@
 import React, { useState } from 'react';
-import { Minus, Plus, Trash2 } from 'lucide-react';
+import { Minus, Plus, Trash2, CheckSquare, Square } from 'lucide-react';
 import { Product } from '@/data/products';
 import { useCart } from '@/context/CartContext';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface CartItemProps {
   product: Product & { quantity: number };
+  isSelected?: boolean;
+  onToggleSelect?: () => void;
 }
 
-const CartItem: React.FC<CartItemProps> = ({ product }) => {
+const CartItem: React.FC<CartItemProps> = ({ product, isSelected = true, onToggleSelect }) => {
   const { updateQuantity, removeFromCart } = useCart();
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
     <div className="flex gap-3 bg-card rounded-xl p-3 shadow-soft animate-fade-in">
+      {/* Selection Checkbox */}
+      {onToggleSelect && (
+        <button
+          onClick={onToggleSelect}
+          className="flex-shrink-0 self-center"
+        >
+          {isSelected ? (
+            <CheckSquare className="w-5 h-5 text-primary" />
+          ) : (
+            <Square className="w-5 h-5 text-muted-foreground" />
+          )}
+        </button>
+      )}
+
       <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
         {!imageLoaded && (
           <Skeleton className="absolute inset-0 w-full h-full" />
@@ -22,7 +37,9 @@ const CartItem: React.FC<CartItemProps> = ({ product }) => {
         <img
           src={product.image}
           alt={product.name}
-          loading="lazy"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
           onLoad={() => setImageLoaded(true)}
           className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
         />
