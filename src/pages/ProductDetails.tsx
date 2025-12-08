@@ -24,13 +24,13 @@ const ProductDetails: React.FC = () => {
 
   const product = products.find(p => p.id === id);
 
-  // 1.6s loading for better image preloading
+  // 1.2s loading for better image preloading
   useEffect(() => {
     setIsLoading(true);
     setImageLoaded(false);
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1600);
+    }, 1200);
     return () => clearTimeout(timer);
   }, [id]);
 
@@ -51,14 +51,11 @@ const ProductDetails: React.FC = () => {
   };
 
   const handleOrder = () => {
-    addToCart(product);
     triggerCelebration();
-    const orderText = `অর্ডার তথ্য:\n${product.name} (ID: ${product.id}) - 1 পিস`;
-    navigator.clipboard.writeText(orderText);
-    toast.success('অর্ডার তথ্য কপি হয়েছে!', {
-      description: 'এখন অর্ডার পেজে যাচ্ছেন...'
+    toast.success('অর্ডার পেজে যাচ্ছেন...', {
+      description: 'শুধু এই পণ্যটি অর্ডার হবে'
     });
-    navigate('/order');
+    navigate('/order', { state: { singleProduct: product } });
   };
 
   const allProducts = products.filter(p => p.id !== product.id);
